@@ -6,6 +6,6 @@ namespace Finance_it.API.Models
     public enum Role
     {
         Admin = 1, 
-        user= 2,
+        User= 2, 
     }
 }

@@ -5,10 +5,10 @@ namespace Finance_it.API.Models
     public class RefreshToken
     {
         public int Id { get; set; }
-        [Required(ErrorMessage =" A Token is required.")]
-        public string Token { get; set; }
+        [Required(ErrorMessage ="Token is required.")]
+        public string Token { get; set; } = null!;
         public int UserId { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; } 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         [Required]

@@ -12,20 +12,21 @@ namespace Finance_it.API.Models
         [StringLength(50, MinimumLength = 2, ErrorMessage ="Name must be between 2 and 50 characters.")]
         public string Name { get; set; }=string.Empty;
         [Required(ErrorMessage ="Email is required")]
-        public string Email { get; set; }= string.Empty;
+        [EmailAddress(ErrorMessage ="Invalid Email Address")]
+        public string Email { get; set; } = null!;
         [Required(ErrorMessage ="Password is required")]
-        public string Password { get; set; } = string.Empty;
+        public string Password { get; set; } = null!;
         [Required]
-        public DateTime CreateAt { get; set; } = DateTime.Now;
-        [Required(ErrorMessage ="A Login date is required.")]
+        public DateTime CreateAt { get; set; } = DateTime.UtcNow;
+        [Required(ErrorMessage ="Login date is required.")]
         public DateTime LastLogin {  get; set; }
-        [Required(ErrorMessage ="A User Role is required.")]
-        [EnumDataType(typeof(Role), ErrorMessage ="Invalid User Role.")]
-        public Role Role { get; set; }
-        public ICollection<FinancialEntry> FinancialEntries { get; set; } = [];
-        public ICollection<FinancialScore> FinancialScores { get; set; } = [];
-        public ICollection<Recommendation> Recommendations { get; set; } = [];
-        public ICollection<Goal> Goals { get; set; } = [];
-        public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
+        [Required(ErrorMessage = "User Role is required.")]
+        [EnumDataType(typeof(Role), ErrorMessage = "Invalid User Role.")]
+        public virtual Role Role { get; set; } = Role.User;
+        public virtual ICollection<FinancialEntry> FinancialEntries { get; set; } = [];
+        public virtual ICollection<FinancialScore> FinancialScores { get; set; } = [];
+        public virtual ICollection<Recommendation> Recommendations { get; set; } = [];
+        public virtual ICollection<Goal> Goals { get; set; } = [];
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = [];
     }
 }

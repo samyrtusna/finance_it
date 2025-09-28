@@ -3,8 +3,8 @@ using Finance_it.API.Repositories.GenericRepositories;
 
 namespace Finance_it.API.Repositories.CustomRepositories
 {
-    public interface IUserRepository : IGenericRepository<User>
+    public interface IRefreshTokenRepository : IGenericRepository<RefreshToken>
     {
-        Task<User?> GetUserByEmailAsync(string email);
+        Task<RefreshToken?> GetRefreshTokenByTokenAsync (string token);
     }
-} 
+}

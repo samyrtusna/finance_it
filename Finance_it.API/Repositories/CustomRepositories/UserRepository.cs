@@ -13,7 +13,7 @@ namespace Finance_it.API.Repositories.CustomRepositories
         {
             _context = context;
         }
-        public async Task<User?> GetUserByEmail(string email)
+        public async Task<User?> GetUserByEmailAsync(string email) 
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }

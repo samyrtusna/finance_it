@@ -4,6 +4,7 @@ using Finance_it.API.Models.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Finance_it.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250924200538_Mig3")]
+    partial class Mig3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,7 +57,7 @@ namespace Finance_it.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FinancialEntries", (string)null);
+                    b.ToTable("FinancialEntries");
                 });
 
             modelBuilder.Entity("Finance_it.API.Models.FinancialScore", b =>
@@ -78,7 +81,7 @@ namespace Finance_it.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("FinancialScores", (string)null);
+                    b.ToTable("FinancialScores");
                 });
 
             modelBuilder.Entity("Finance_it.API.Models.Goal", b =>
@@ -115,7 +118,7 @@ namespace Finance_it.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Goals", (string)null);
+                    b.ToTable("Goals");
                 });
 
             modelBuilder.Entity("Finance_it.API.Models.Recommendation", b =>
@@ -146,7 +149,7 @@ namespace Finance_it.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Recommendations", (string)null);
+                    b.ToTable("Recommendations");
                 });
 
             modelBuilder.Entity("Finance_it.API.Models.RefreshToken", b =>
@@ -180,7 +183,7 @@ namespace Finance_it.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Finance_it.API.Models.ScoreDetail", b =>
@@ -205,7 +208,7 @@ namespace Finance_it.API.Migrations
 
                     b.HasIndex("FinancialScoreId");
 
-                    b.ToTable("ScoreDetails", (string)null);
+                    b.ToTable("ScoreDetails");
                 });
 
             modelBuilder.Entity("Finance_it.API.Models.User", b =>
@@ -243,7 +246,7 @@ namespace Finance_it.API.Migrations
                     b.HasIndex(new[] { "Email" }, "IX_Email_Unique")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Finance_it.API.Models.FinancialEntry", b =>
