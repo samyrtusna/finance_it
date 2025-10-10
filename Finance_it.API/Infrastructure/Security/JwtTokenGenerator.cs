@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Finance_it.API.Models;
+using Finance_it.API.Data.Entities;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Finance_it.API.Infrastructure.Security
@@ -16,7 +16,7 @@ namespace Finance_it.API.Infrastructure.Security
             _configuration = configuration;
         }
 
-        public string GenerateAccessToken(User user) 
+        public string GenerateAccessToken(User user)
         {
             var claims = new[]
             {
@@ -24,7 +24,7 @@ namespace Finance_it.API.Infrastructure.Security
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.ToString()), 
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT Key is not configured.")));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -43,9 +43,9 @@ namespace Finance_it.API.Infrastructure.Security
         public string GenerateRefreshToken()
         {
             var randomNumber = new byte[32];
-            var rng = RandomNumberGenerator.Create(); 
+            var rng = RandomNumberGenerator.Create();
             rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);   
-        }        
+            return Convert.ToBase64String(randomNumber);
+        }
     }
 }

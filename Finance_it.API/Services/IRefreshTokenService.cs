@@ -1,14 +1,12 @@
-﻿using Finance_it.API.Dtos.ApiResponsesDtos;
-using Finance_it.API.Dtos.RefreshTokenDtos;
-using Finance_it.API.Dtos.UserDtos;
-using Finance_it.API.Models;
+﻿using Finance_it.API.Data.Entities;
+using Finance_it.API.Models.Dtos.RefreshTokenDtos;
 
 namespace Finance_it.API.Services
 {
     public interface IRefreshTokenService
     {
-        Task<ApiResponseDto<RefreshTokenResponseDto>> AddRefreshTokenAsync(int id);
-        Task<ApiResponseDto<RefreshTokenResponseDto>> GetRefreshTokenAsync(string token);
-        Task RevokeRefreshTokenAsync(RefreshToken refreshToken);
+        Task<RefreshTokenResponseDto> AddRefreshTokenAsync(int id);
+        //Task<RefreshTokenResponseDto> GetRefreshTokenAsync(string token);
+        void RevokeRefreshTokenAsync(RefreshToken refreshToken);
     }
 }

@@ -1,7 +1,6 @@
 using System.Text;
+using Finance_it.API.Data.AppDbContext;
 using Finance_it.API.Infrastructure.Security;
-using Finance_it.API.Models.AppDbContext;
-using Finance_it.API.Repositories.CustomRepositories;
 using Finance_it.API.Repositories.GenericRepositories;
 using Finance_it.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -18,6 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("EFCoreDBConnection")));
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -38,14 +38,16 @@ builder.Services.AddAuthentication(options =>
 
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
 
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IWeeklyAgregatesService, WeeklyAgregatesService>();
+builder.Services.AddScoped<IMonthlyAgregatesService, MonthlyAgregatesService>();
+builder.Services.AddScoped<IYearlyAgregatesService, YearlyAgregatesService>();
 
 
 var app = builder.Build();
@@ -58,6 +60,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

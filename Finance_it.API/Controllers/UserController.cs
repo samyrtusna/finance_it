@@ -1,7 +1,8 @@
-﻿using Finance_it.API.Dtos.ApiResponsesDtos;
-using Finance_it.API.Dtos.UserDtos;
+﻿using System.Security.Claims;
+using Finance_it.API.Models.Dtos.ApiResponsesDtos;
+using Finance_it.API.Models.Dtos.UserDtos;
 using Finance_it.API.Services;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Finance_it.API.Controllers
@@ -18,18 +19,24 @@ namespace Finance_it.API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<ApiResponseDto<AuthenticationResponseDto>>> Register (RegisterRequestDto dto)
+        public async Task<ActionResult<ApiResponseDto<AuthenticationResponseDto>>> Register(RegisterRequestDto dto)
         {
-            try
-            {
-                var result = await _userServices.RegisterAsync(dto);
+            var result = await _userServices.RegisterAsync(dto);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ApiResponseDto<AuthenticationResponseDto>(500, new List<string> { "An error occurred while processing your request.", ex.Message }));
-            }
+            return Ok(new ApiResponseDto<AuthenticationResponseDto>(200, result));
+        }
+
+
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<ActionResult<ApiResponseDto<ConfirmationResponseDto>>> ChangePassword(PasswordChangeRequestDto dto)
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? throw new BadHttpRequestException("Email claim not found.");
+
+            var result = await _userServices.ChangePassword(dto, email);
+
+            return Ok(new ApiResponseDto<ConfirmationResponseDto>(200, result));
+
         }
     }
 }

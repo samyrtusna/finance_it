@@ -1,14 +1,12 @@
-﻿using Finance_it.API.Dtos.ApiResponsesDtos;
-using Finance_it.API.Dtos.UserDtos;
-using Finance_it.API.Infrastructure.Security;
-using Finance_it.API.Repositories.CustomRepositories;
+﻿using Finance_it.API.Models.Dtos.ApiResponsesDtos;
+using Finance_it.API.Models.Dtos.UserDtos;
 
 namespace Finance_it.API.Services
 {
     public interface IAuthService
     {
-        Task<ApiResponseDto<AuthenticationResponseDto>> LoginAsync(LoginRequestDto dto);
-        Task<ApiResponseDto<AuthenticationResponseDto>> RefreshTokenAsync(string token);
-        Task<ApiResponseDto<ConfirmationResponseDto>> LogoutAsync(int id); 
+        Task<AuthenticationResponseDto> LoginAsync(LoginRequestDto dto);
+        Task<AuthenticationResponseDto> RefreshTokenAsync(string token);
+        Task<ConfirmationResponseDto> LogoutAsync(int id); 
     }
 }

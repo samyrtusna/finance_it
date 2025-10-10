@@ -1,9 +1,7 @@
-﻿
-using Finance_it.API.Dtos.ApiResponsesDtos;
-using Finance_it.API.Dtos.RefreshTokenDtos;
+﻿using Finance_it.API.Data.Entities;
 using Finance_it.API.Infrastructure.Security;
-using Finance_it.API.Models;
-using Finance_it.API.Repositories.CustomRepositories;
+using Finance_it.API.Models.Dtos.RefreshTokenDtos;
+using Finance_it.API.Repositories.GenericRepositories;
 
 namespace Finance_it.API.Services
 {
@@ -11,16 +9,18 @@ namespace Finance_it.API.Services
     {
         private readonly IConfiguration _config;
         private readonly IJwtTokenGenerator _tokenGenerator;
-        private readonly IRefreshTokenRepository _refreshTokenRepository; 
+        private readonly IGenericRepository<RefreshToken> _refreshTokenRepository; 
 
-        public RefreshTokenService(IJwtTokenGenerator tokenGenerator, IRefreshTokenRepository refreshTokenRepository, IConfiguration config )
+        public RefreshTokenService(IJwtTokenGenerator tokenGenerator, IGenericRepository<RefreshToken> refreshTokenRepository, IConfiguration config )
         {
             _config = config;
             _tokenGenerator = tokenGenerator;
             _refreshTokenRepository = refreshTokenRepository;
         }
-        public async Task<ApiResponseDto<RefreshTokenResponseDto>> AddRefreshTokenAsync(int id)
+        public async Task<RefreshTokenResponseDto> AddRefreshTokenAsync(int id)
         {
+            ArgumentNullException.ThrowIfNull(id, $"the argument {nameof(id)} is null");
+
             var refreshToken = _tokenGenerator.GenerateRefreshToken();
             int tokenExpiration = int.Parse(_config["Jwt:RefreshTokenExpiration"]!);
 
@@ -31,48 +31,21 @@ namespace Finance_it.API.Services
                 ExpiresAt = DateTime.UtcNow.AddDays(tokenExpiration)
             };
             await _refreshTokenRepository.AddAsync(refreshTokenEntity);
-            await _refreshTokenRepository.SaveAsync();
 
-            var response = new RefreshTokenResponseDto
+            return new RefreshTokenResponseDto
             {
                 Token = refreshTokenEntity.Token,
                 UserId = refreshTokenEntity.UserId,
                 ExpiresAt = refreshTokenEntity.ExpiresAt
             };
-
-
-            return new ApiResponseDto<RefreshTokenResponseDto>(200, response);
-
         }
 
-        public async Task<ApiResponseDto<RefreshTokenResponseDto>> GetRefreshTokenAsync(string token)
-        {
-            var refreshToken = await _refreshTokenRepository.GetRefreshTokenByTokenAsync(token);
-
-            if(refreshToken == null)
-            {
-                return new ApiResponseDto<RefreshTokenResponseDto>(404,new List<string> { "Refresh token not found." });
-            }
-            var response = new RefreshTokenResponseDto
-            {
-                Token = refreshToken.Token,
-                UserId = refreshToken.UserId,
-                CreatedAt = refreshToken.CreatedAt,
-                ExpiresAt = refreshToken.ExpiresAt,
-                IsRevoked = refreshToken.IsRevoked,
-                RevokedAt = refreshToken.RevokedAt
-            };
-
-            return new ApiResponseDto<RefreshTokenResponseDto>(200, response);
-        }
-
-        public async Task RevokeRefreshTokenAsync(RefreshToken refreshToken)
+        public void RevokeRefreshTokenAsync(RefreshToken refreshToken)
         {
             refreshToken.IsRevoked = true;
             refreshToken.RevokedAt = DateTime.UtcNow;
 
             _refreshTokenRepository.Update(refreshToken);
-            await _refreshTokenRepository.SaveAsync();
         }
     }
 }

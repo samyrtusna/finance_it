@@ -1,10 +1,9 @@
 ﻿using System.Security.Claims;
-using Castle.Components.DictionaryAdapter.Xml;
-using Finance_it.API.Dtos.ApiResponsesDtos;
-using Finance_it.API.Dtos.UserDtos;
+using Finance_it.API.Infrastructure.Exceptions;
+using Finance_it.API.Models.Dtos.ApiResponsesDtos;
+using Finance_it.API.Models.Dtos.UserDtos;
 using Finance_it.API.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Finance_it.API.Controllers
@@ -23,37 +22,30 @@ namespace Finance_it.API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<ApiResponseDto<AuthenticationResponseDto>>> Login(LoginRequestDto dto)
         {
-            try
-            {
-                var result = await _authService.LoginAsync(dto);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ApiResponseDto<AuthenticationResponseDto>(500, new List<string> { "An error occurred while processing your request.", ex.Message }));
-            }
+            var result = await _authService.LoginAsync(dto);
+            return Ok(new ApiResponseDto<AuthenticationResponseDto>(200, result));
         }
 
         [Authorize]
         [HttpPost("logout")]
         public async Task<ActionResult<ApiResponseDto<ConfirmationResponseDto>>> Logout()
         {
-            try
+            var claimValue = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(claimValue, out int id))
             {
-                var claimValue = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-                if(!int.TryParse(claimValue, out int id))
-                {
-                    return BadRequest(new ApiResponseDto<ConfirmationResponseDto>(400, new List<string> { "Invalid user ID in token." }));
-                }
-                var result = await _authService.LogoutAsync(id);
+                throw new BadRequestException("Invalid user ID in token.");
+            }
+            var result = await _authService.LogoutAsync(id);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new ApiResponseDto<ConfirmationResponseDto>(500, new List<string> { "An error occurred while processing your request.", ex.Message }));
-            }
+            return Ok(new ApiResponseDto<ConfirmationResponseDto>(200, result));
         }
 
+
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<ApiResponseDto<AuthenticationResponseDto>>> RefreshToken([FromBody] string token)
+        {
+            var result = await _authService.RefreshTokenAsync(token);
+            return Ok(new ApiResponseDto<AuthenticationResponseDto>(200, result));
+        }
     }
 }

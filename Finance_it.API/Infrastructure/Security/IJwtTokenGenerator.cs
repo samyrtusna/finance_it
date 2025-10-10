@@ -1,4 +1,4 @@
-﻿using Finance_it.API.Models;
+﻿using Finance_it.API.Data.Entities;
 
 namespace Finance_it.API.Infrastructure.Security
 {

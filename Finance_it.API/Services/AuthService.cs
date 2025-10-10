@@ -1,104 +1,98 @@
-﻿using Finance_it.API.Dtos.ApiResponsesDtos;
-using Finance_it.API.Dtos.UserDtos;
+﻿using Finance_it.API.Data.Entities;
+using Finance_it.API.Infrastructure.Exceptions;
 using Finance_it.API.Infrastructure.Security;
-using Finance_it.API.Repositories.CustomRepositories;
+using Finance_it.API.Models.Dtos.ApiResponsesDtos;
+using Finance_it.API.Models.Dtos.UserDtos;
+using Finance_it.API.Repositories.GenericRepositories;
 
 namespace Finance_it.API.Services
 {
     public class AuthService : IAuthService
     {
-         private readonly IUserRepository _userRepository;
-        private readonly IRefreshTokenService _TokenServices;
-        private readonly IJwtTokenGenerator _TokenGenerator;
+        private readonly IGenericRepository<User> _userRepository;
+        private readonly IGenericRepository<RefreshToken> _refreshTokenRepository;
+        private readonly IRefreshTokenService _tokenServices;
+        private readonly IJwtTokenGenerator _tokenGenerator;
 
-        public AuthService(IUserRepository userRepository, IRefreshTokenService tokenServices, IJwtTokenGenerator tokenGenerator)
+        public AuthService(IGenericRepository<User> userRepository, IRefreshTokenService tokenServices, IJwtTokenGenerator tokenGenerator, IGenericRepository<RefreshToken> refreshTokenRepository)
         {
             _userRepository = userRepository;
-            _TokenServices = tokenServices;
-            _TokenGenerator = tokenGenerator;
+            _tokenServices = tokenServices;
+            _tokenGenerator = tokenGenerator;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
-        public async Task<ApiResponseDto<AuthenticationResponseDto>> LoginAsync(LoginRequestDto dto)
+        public async Task<AuthenticationResponseDto> LoginAsync(LoginRequestDto dto)
         {
-            var user = await _userRepository.GetUserByEmailAsync(dto.Email);
+            ArgumentNullException.ThrowIfNull(dto, $"the argument {nameof(dto)} is null");
 
-            if (user == null)
-            {
-                return new ApiResponseDto<AuthenticationResponseDto>(404, "User not found.");
-            }
+            var user = await _userRepository.GetByFilterAsync(u => u.Email.Equals(dto.Email))?? throw new NotFoundException("User not found.");
+
             bool isPasswordValid = BCrypt.Net.BCrypt.Verify(dto.Password, user.Password);
 
             if (!isPasswordValid)
             {
-                return new ApiResponseDto<AuthenticationResponseDto>(401, "Invalid password.");
+                throw new UnauthorizedException("Invalid password.");
             }
-            string accessToken = _TokenGenerator.GenerateAccessToken(user);
-            var NewRefreshToken = await _TokenServices.AddRefreshTokenAsync(user.Id);
+            string accessToken = _tokenGenerator.GenerateAccessToken(user);
+            var NewRefreshToken = await _tokenServices.AddRefreshTokenAsync(user.Id);
 
             user.LastLogin = DateTime.UtcNow;
             _userRepository.Update(user);
+
             await _userRepository.SaveAsync();
 
-            var response = new AuthenticationResponseDto
+            return new AuthenticationResponseDto
             {
                 AccessToken = accessToken,
-                RefreshToken = NewRefreshToken.Data.Token,
+                RefreshToken = NewRefreshToken.Token,
             };
-            return new ApiResponseDto<AuthenticationResponseDto>(200, response);
         }
 
-        public async Task<ApiResponseDto<AuthenticationResponseDto>> RefreshTokenAsync(string token)
+        public async Task<AuthenticationResponseDto> RefreshTokenAsync(string token)
         {
-            var existingRefreshToken = await _TokenServices.GetRefreshTokenAsync(token);
+            ArgumentNullException.ThrowIfNull(token, $"the argument {nameof(token)} is null");
 
-            if (existingRefreshToken == null || existingRefreshToken.StatusCode == 404)
+            var existingRefreshToken = await _refreshTokenRepository.GetByFilterAsync(r => r.Token.Equals(token)) ?? throw new NotFoundException("Refresh token not found.");
+
+            if (existingRefreshToken.IsRevoked || existingRefreshToken.ExpiresAt <= DateTime.UtcNow)
             {
-                return new ApiResponseDto<AuthenticationResponseDto>(404, "Refresh token not found.");
+                throw new UnauthorizedException("Refresh token is invalid or expired.");
             }
 
-            if (existingRefreshToken.Data.IsRevoked || existingRefreshToken.Data.ExpiresAt <= DateTime.UtcNow)
-            {
-                return new ApiResponseDto<AuthenticationResponseDto>(401, "Refresh token is invalid or expired.");
-            }
+            var user = await _userRepository.GetByIdAsync(existingRefreshToken.UserId)?? throw new NotFoundException("User not found.");
 
-            var user = await _userRepository.GetByIdAsync(existingRefreshToken.Data.UserId);
+            var accessToken = _tokenGenerator.GenerateAccessToken(user);
+            var refreshToken = await _tokenServices.AddRefreshTokenAsync(user.Id);
 
-            if (user == null)
-            {
-                return new ApiResponseDto<AuthenticationResponseDto>(404, "User not found.");
-            }
-            var accessToken = _TokenGenerator.GenerateAccessToken(user);
-            var refreshToken = await _TokenServices.AddRefreshTokenAsync(user.Id);
+            _tokenServices.RevokeRefreshTokenAsync(existingRefreshToken);
 
-            var response = new AuthenticationResponseDto
+            await _userRepository.SaveAsync();
+
+            return new AuthenticationResponseDto
             {
                 AccessToken = accessToken,
-                RefreshToken = refreshToken.Data.Token,
+                RefreshToken = refreshToken.Token
             };
-
-            return new ApiResponseDto<AuthenticationResponseDto>(200, response);
         }
 
-        public async Task<ApiResponseDto<ConfirmationResponseDto>> LogoutAsync(int userId)
+        public async Task<ConfirmationResponseDto> LogoutAsync(int userId)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null)
-            {
-                return new ApiResponseDto<ConfirmationResponseDto>(404, "User not found.");
-            }
+            ArgumentNullException.ThrowIfNull(userId, $"the argument {nameof(userId)} is null");
+
+            var user = await _userRepository.GetByIdAsync(userId)?? throw new NotFoundException("User not found.");
+          
             var refreshTokens = user?.RefreshTokens.Where(rt => !rt.IsRevoked && rt.ExpiresAt > DateTime.UtcNow).ToList();
             if (refreshTokens != null )
             {
                 foreach (var token in refreshTokens)
                 {
-                    token.IsRevoked = true;
-                    token.RevokedAt = DateTime.UtcNow;
+                    _tokenServices.RevokeRefreshTokenAsync(token);
                 }
-                _userRepository.Update(user);
                 await _userRepository.SaveAsync();
             }
-            
-            return new ApiResponseDto<ConfirmationResponseDto>(200, new ConfirmationResponseDto { Message = "User logged out successfully." });
+
+            return new ConfirmationResponseDto { Message = "User logged out successfully." };
         }
     }
 }
