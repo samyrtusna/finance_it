@@ -4,7 +4,6 @@ namespace Finance_it.API.Models.Dtos.FinancialEntryDtos
 {
     public class UpdateFinancialEntryRequestDto
     {
-        public int Id { get; set; }
         public int UserId { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; }

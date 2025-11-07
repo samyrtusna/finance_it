@@ -3,8 +3,7 @@
     public class YearlyAgregateResponseDto
     {
         public int Year { get; set; }
-        public decimal YearIncome { get; set; }
-        public decimal YearExpense { get; set; } 
-        public decimal YearBalance { get; set; } 
+        public decimal AgregateName { get; set; }
+        public decimal AgregateValue { get; set; } 
     }
 }

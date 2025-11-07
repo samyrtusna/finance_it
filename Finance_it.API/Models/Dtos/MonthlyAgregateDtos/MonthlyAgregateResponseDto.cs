@@ -4,8 +4,7 @@
     {
         public int Year { get; set; }
         public string Month { get; set; } = string.Empty;
-        public decimal MonthIncome { get; set; }
-        public decimal MonthExpense { get; set; }
-        public decimal MonthBalance { get; set; }  
+        public string AgregateName { get; set; }
+        public decimal AgregateValue { get; set; } 
     }
 }

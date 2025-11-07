@@ -14,55 +14,53 @@ namespace Finance_it.API.Models.Automapper
         public AppMappingProfile()
         {
             CreateMap<RegisterRequestDto, User>()
-                .ForMember(Dest => Dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(Dest => Dest.Email, opt => opt.MapFrom(src => src.Email))
-                .ForMember(Dest => Dest.Password, opt => opt.MapFrom(src => src.Password))
-                .ForMember(Dest => Dest.Role, opt => opt.MapFrom(src => src.Role ?? Role.User))
-                .ForMember(Dest => Dest.CreateAt, act => act.Ignore())
-                .ForMember(Dest => Dest.LastLogin, act => act.Ignore());
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(src => src.Password))
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role ?? Role.User))
+                .ForMember(dest => dest.CreateAt, act => act.Ignore())
+                .ForMember(dest => dest.LastLogin, act => act.Ignore());
 
             CreateMap<RefreshTokenRequestDto, RefreshToken>()
-                .ForMember(Dest => Dest.Token, opt => opt.MapFrom(src => src.Token))
-                .ForMember(Dest => Dest.UserId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(Dest => Dest.CreatedAt, act => act.Ignore())
-                .ForMember(Dest => Dest.ExpiresAt, act => act.Ignore())
-                .ForMember(Dest => Dest.IsRevoked, act => act.Ignore())
-                .ForMember(Dest => Dest.RevokedAt, act => act.Ignore());
+                .ForMember(dest => dest.Token, opt => opt.MapFrom(src => src.Token))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.CreatedAt, act => act.Ignore())
+                .ForMember(dest => dest.ExpiresAt, act => act.Ignore())
+                .ForMember(dest => dest.IsRevoked, act => act.Ignore())
+                .ForMember(dest => dest.RevokedAt, act => act.Ignore());
 
             CreateMap<RefreshToken, RefreshTokenResponseDto>()
-                .ForMember(Dest => Dest.Token, opt => opt.MapFrom(src => src.Token))
-                .ForMember(Dest => Dest.UserId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(Dest => Dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
-                .ForMember(Dest => Dest.ExpiresAt, opt => opt.MapFrom(src => src.ExpiresAt))
-                .ForMember(Dest => Dest.IsRevoked, opt => opt.MapFrom(src => src.IsRevoked))
-                .ForMember(Dest => Dest.RevokedAt, opt => opt.MapFrom(src => src.RevokedAt));
+                .ForMember(dest => dest.Token, opt => opt.MapFrom(src => src.Token))
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
+                .ForMember(dest => dest.ExpiresAt, opt => opt.MapFrom(src => src.ExpiresAt))
+                .ForMember(dest => dest.IsRevoked, opt => opt.MapFrom(src => src.IsRevoked))
+                .ForMember(dest => dest.RevokedAt, opt => opt.MapFrom(src => src.RevokedAt));
 
             CreateMap<CreateFinancialEntryRequestDto, FinancialEntry>()
-                .ForMember(Dest => Dest.UserId, opt => opt.MapFrom(src => src.UserId))
-                .ForMember(Dest => Dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
-                .ForMember(Dest => Dest.Amount, opt => opt.MapFrom(src => src.Amount))
-                .ForMember(Dest => Dest.Description, opt => opt.MapFrom(src => src.Description))
-                .ForMember(Dest => Dest.TransactionDate, opt => opt.Ignore());
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.TransactionDate, opt => opt.Ignore());
 
             CreateMap<WeeklyAgregate, WeeklyAgregateResponseDto>()
-                .ForMember(Dest => Dest.WeekStartDate, opt => opt.MapFrom(src => src.WeekStartDate))
-                .ForMember(Dest => Dest.WeekEndDate, opt => opt.MapFrom(src => src.WeekEndDate))
-                .ForMember(dest => dest.WeekIncome, opt => opt.MapFrom(src => src.WeekIncome))
-                .ForMember(Dest => Dest.WeekExpense, opt => opt.MapFrom(src => src.WeekExpense))
-                .ForMember(Dest => Dest.WeekBalance, opt => opt.MapFrom(src => src.WeekBalance));
+                .ForMember(dest => dest.UsertId, opt => opt.MapFrom(src => src.UserId))
+                .ForMember(dest => dest.WeekStartDate, opt => opt.MapFrom(src => src.WeekStartDate))
+                .ForMember(dest => dest.WeekEndDate, opt => opt.MapFrom(src => src.WeekEndDate))
+                .ForMember(dest => dest.AgregateName, opt => opt.MapFrom(src => src.AgregateName))
+                .ForMember(dest => dest.AgregateValue, opt => opt.MapFrom(src => src.AgregateValue));
 
             CreateMap<MonthlyAgregate, MonthlyAgregateResponseDto>()
                 .ForMember(Dest => Dest.Year, opt => opt.MapFrom(src => src.Year))
                 .ForMember(Dest => Dest.Month, opt => opt.MapFrom(src => src.Month))
-                .ForMember(Dest => Dest.MonthIncome, opt => opt.MapFrom(src => src.MonthIncome))
-                .ForMember(Dest => Dest.MonthExpense, opt => opt.MapFrom(src => src.MonthExpense))
-                .ForMember(Dest => Dest.MonthBalance, opt => opt.MapFrom(src => src.MonthBalance));
+                .ForMember(Dest => Dest.AgregateName, opt => opt.MapFrom(src => src.AgregateName))
+                .ForMember(Dest => Dest.AgregateValue, opt => opt.MapFrom(src => src.AgregateValue));
 
             CreateMap<YearlyAgregate, YearlyAgregateResponseDto>()
                 .ForMember(Dest => Dest.Year, opt => opt.MapFrom(src => src.Year))
-                .ForMember(Dest => Dest.YearIncome, opt => opt.MapFrom(src => src.YearIncome))
-                .ForMember(Dest => Dest.YearExpense, opt => opt.MapFrom(src => src.YearExpense))
-                .ForMember(Dest => Dest.YearBalance, opt => opt.MapFrom(src => src.YearBalance));
+                .ForMember(Dest => Dest.AgregateName, opt => opt.MapFrom(src => src.AgregateName))
+                .ForMember(Dest => Dest.AgregateValue, opt => opt.MapFrom(src => src.AgregateValue));
 
             CreateMap<FinancialEntry, GetFinancialEntryResponseDto>()
                 .ForMember(Dest => Dest.Id, opt => opt.MapFrom(src => src.Id))

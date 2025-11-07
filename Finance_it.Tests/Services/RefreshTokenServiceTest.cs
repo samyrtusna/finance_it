@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Finance_it.API.Data.Entities;
 using Finance_it.API.Infrastructure.Security;
 using Finance_it.API.Repositories.GenericRepositories;
-using Finance_it.API.Services;
+using Finance_it.API.Services.RefreshTokenServices;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Xunit;

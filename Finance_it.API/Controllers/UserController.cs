@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Finance_it.API.Models.Dtos.ApiResponsesDtos;
 using Finance_it.API.Models.Dtos.UserDtos;
-using Finance_it.API.Services;
+using Finance_it.API.Services.UserServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,19 +11,19 @@ namespace Finance_it.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userServices;
+        private readonly IUserService _service;
 
-        public UserController(IUserService userServices)
+        public UserController(IUserService service)
         {
-            _userServices = userServices;
+            _service = service;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<ApiResponseDto<AuthenticationResponseDto>>> Register(RegisterRequestDto dto)
+        public async Task<ActionResult<ApiResponseDto<string>>> Register(RegisterRequestDto dto)
         {
-            var result = await _userServices.RegisterAsync(dto);
+            var response = await _service.RegisterAsync(dto);
 
-            return Ok(new ApiResponseDto<AuthenticationResponseDto>(200, result));
+            return Ok(response);
         }
 
 
@@ -33,9 +33,9 @@ namespace Finance_it.API.Controllers
         {
             var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value ?? throw new BadHttpRequestException("Email claim not found.");
 
-            var result = await _userServices.ChangePassword(dto, email);
+            var response = await _service.ChangePassword(dto, email);
 
-            return Ok(new ApiResponseDto<ConfirmationResponseDto>(200, result));
+            return Ok(response);
 
         }
     }

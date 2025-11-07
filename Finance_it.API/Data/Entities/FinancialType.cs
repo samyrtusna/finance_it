@@ -8,6 +8,7 @@ namespace Finance_it.API.Data.Entities
         Income = 1,
         Expense = 2,
         Debt = 3,
-        Saving = 4
+        Saving = 4,
+        Investment = 5
     }
 }

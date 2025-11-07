@@ -2,7 +2,7 @@
 using Finance_it.API.Infrastructure.Exceptions;
 using Finance_it.API.Models.Dtos.ApiResponsesDtos;
 using Finance_it.API.Models.Dtos.UserDtos;
-using Finance_it.API.Services;
+using Finance_it.API.Services.AuthServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,18 +12,18 @@ namespace Finance_it.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService _authService;
+        private readonly IAuthService _service;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService service)
         {
-            _authService = authService;
+            _service = service;
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<ApiResponseDto<AuthenticationResponseDto>>> Login(LoginRequestDto dto)
+        public async Task<ActionResult<ApiResponseDto<string>>> Login(LoginRequestDto dto)
         {
-            var result = await _authService.LoginAsync(dto);
-            return Ok(new ApiResponseDto<AuthenticationResponseDto>(200, result));
+            var response = await _service.LoginAsync(dto);
+            return Ok(response);
         }
 
         [Authorize]
@@ -35,17 +35,17 @@ namespace Finance_it.API.Controllers
             {
                 throw new BadRequestException("Invalid user ID in token.");
             }
-            var result = await _authService.LogoutAsync(id);
+            var response = await _service.LogoutAsync(id);
 
-            return Ok(new ApiResponseDto<ConfirmationResponseDto>(200, result));
+            return Ok(response);
         }
 
 
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<ApiResponseDto<AuthenticationResponseDto>>> RefreshToken([FromBody] string token)
+        public async Task<ActionResult<ApiResponseDto<string>>> RefreshToken()
         {
-            var result = await _authService.RefreshTokenAsync(token);
-            return Ok(new ApiResponseDto<AuthenticationResponseDto>(200, result));
+            var response= await _service.RefreshTokenAsync();
+            return Ok(response);
         }
     }
 }
