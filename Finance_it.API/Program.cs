@@ -4,6 +4,7 @@ using Finance_it.API.Infrastructure.BackgroundServices;
 using Finance_it.API.Infrastructure.Security;
 using Finance_it.API.Repositories.GenericRepositories;
 using Finance_it.API.Services.AuthServices;
+using Finance_it.API.Services.CategoryServices;
 using Finance_it.API.Services.FinancialAgregatesServices;
 using Finance_it.API.Services.FinancialEntryServices;
 using Finance_it.API.Services.MonthlyAgregateServices;
@@ -54,19 +55,21 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFinancialEntryService, FinancialEntryService>();
-builder.Services.AddScoped<IFinancialAgregatesService, FinancialAgregatesService>();
-builder.Services.AddScoped<IWeeklyAgregatesService, WeeklyAgregatesService>();
-builder.Services.AddScoped<IMonthlyAgregatesService, MonthlyAgregatesService>();
-builder.Services.AddScoped<IYearlyAgregatesService, YearlyAgregatesService>();
+builder.Services.AddScoped<IFinancialAggregatesService, FinancialAggregatesService>();
+builder.Services.AddScoped<IWeeklyAggregatesService, WeeklyAggregatesService>();
+builder.Services.AddScoped<IMonthlyAggregatesService, MonthlyAggregatesService>();
+builder.Services.AddScoped<IYearlyAggregatesService, YearlyAggregatesService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") 
+        policy.WithOrigins("http://localhost:5173")
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
+              //.SetPreflightMaxAge(TimeSpan.FromMinutes(10));
     });
 });
 

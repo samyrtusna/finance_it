@@ -1,14 +1,15 @@
 import { useAppDispatch, useAppSelector } from "../state/hooks";
-import { registerUser } from "../state/slices/authSlices/registerUserSlice";
+import { registerUser } from "../state/slices/authSlice";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import type { FormikHelpers } from "formik";
 import { FiUser } from "react-icons/fi";
 import { MdOutlineEmail } from "react-icons/md";
 import { MdLockOutline } from "react-icons/md";
-import logo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { RegisterSchema } from "../formik/registerSchema";
 import type { RegisterRequest } from "../types/authTypes";
+import Spinner from "../components/Spinner";
+import { toast } from "sonner";
 
 type RegisterFormValues = RegisterRequest & {
   confirmPassword: string;
@@ -22,7 +23,7 @@ function Register() {
     confirmPassword: "",
   };
 
-  const registerState = useAppSelector((state) => state.registerUser);
+  const authUserState = useAppSelector((state) => state.authUser);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -45,15 +46,11 @@ function Register() {
     }
   };
 
-  if (registerState.loading) {
-    return <h2 className="text-2xl font-bold text-blue-700">Loading...</h2>;
+  if (authUserState.loading) {
+    return <Spinner />;
   }
-  if (registerState.error) {
-    return (
-      <div>
-        <p className="text-red-500">Error : {registerState.error} </p>
-      </div>
-    );
+  if (authUserState.error) {
+    toast.error(authUserState.error);
   }
 
   return (
@@ -61,7 +58,7 @@ function Register() {
       <div className="w-full max-w-lg h-full max-h-dvh bg-blue-700 rounded-lg shadow-lg">
         <div className="flex h-1/5 justify-center items-center">
           <img
-            src={logo}
+            src="/logo.png"
             alt="App Logo"
             className="w-20 h-20 filter invert brightness-0"
           />

@@ -7,19 +7,36 @@ import type {
 } from "../types/authTypes";
 
 const signup = async (newObject: RegisterRequest): Promise<UserState> => {
-  const response = await http.post<UserState, RegisterRequest>(
-    "/user/register/",
-    newObject
-  );
-  return response.data;
+  try {
+    const response = await http.post<UserState, RegisterRequest>(
+      "/user/register/",
+      newObject
+    );
+    return response;
+  } catch (error: any) {
+    if (error.response.status === 400) {
+      throw new Error("Email is already in use");
+    }
+    throw new Error("Signup failed");
+  }
 };
 
 const login = async (newObject: LoginRequest): Promise<UserState> => {
-  const response = await http.post<UserState, LoginRequest>(
-    "auth/login/",
-    newObject
-  );
-  return response.data;
+  try {
+    const response = await http.post<UserState, LoginRequest>(
+      "auth/login/",
+      newObject
+    );
+    return response;
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      throw new Error("User not registered yet");
+    }
+    if (error.response?.status === 401) {
+      throw new Error("Invalid email or password");
+    }
+    throw new Error("Login failed");
+  }
 };
 
 const logout = async (): Promise<void> => {
@@ -27,8 +44,7 @@ const logout = async (): Promise<void> => {
 };
 
 const refreshToken = async (): Promise<RefreshTokenResponse> => {
-  const response = await http.post<RefreshTokenResponse>("auth/refresh-token");
-  return response.data;
+  return await http.post<RefreshTokenResponse>("auth/refresh-token");
 };
 
 export default { signup, login, logout, refreshToken };

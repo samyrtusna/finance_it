@@ -27,8 +27,8 @@ namespace Finance_it.API.Data.Entities
         public virtual ICollection<Goal> Goals { get; set; } = [];
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = [];
         public virtual ICollection<Category> Categories { get; set; } = [];
-        public virtual ICollection<WeeklyAgregate> WeeklyAgregates { get; set; } = [];
-        public virtual ICollection<MonthlyAgregate> MonthlyAgregates { get; set; } = [];
-        public virtual ICollection<YearlyAgregate> YearlyAgregates { get; set; } = [];
+        public virtual ICollection<WeeklyAggregate> WeeklyAgregates { get; set; } = [];
+        public virtual ICollection<MonthlyAggregate> MonthlyAgregates { get; set; } = [];
+        public virtual ICollection<YearlyAggregate> YearlyAgregates { get; set; } = [];
     }
 }

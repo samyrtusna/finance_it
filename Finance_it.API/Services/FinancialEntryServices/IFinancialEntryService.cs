@@ -5,7 +5,7 @@ namespace Finance_it.API.Services.FinancialEntryServices
 {
     public interface IFinancialEntryService
     {
-        Task<CreateFinancialEntryResponseDto> AddFinancialEntryAsync(CreateFinancialEntryRequestDto entry);
+        Task<CreateFinancialEntryResponseDto> AddFinancialEntryAsync(CreateFinancialEntryRequestDto entry, int userId);
         Task<IEnumerable<GetFinancialEntryResponseDto>> GetAllFinancialEntriesAsync(int userId);
         Task<GetFinancialEntryResponseDto> GetFinancialEntryByIdAsync(int id);
         Task<GetFinancialEntryResponseDto> UpdateFinancialEntryAsync(UpdateFinancialEntryRequestDto dto, int id);

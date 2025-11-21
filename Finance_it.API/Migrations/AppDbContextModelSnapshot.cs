@@ -462,30 +462,6 @@ namespace Finance_it.API.Migrations
                     b.ToTable("FinancialEntries");
                 });
 
-            modelBuilder.Entity("Finance_it.API.Data.Entities.FinancialScore", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CalculatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Score")
-                        .HasColumnType("decimal(5,2)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("FinancialScores");
-                });
-
             modelBuilder.Entity("Finance_it.API.Data.Entities.Goal", b =>
                 {
                     b.Property<int>("Id")
@@ -521,6 +497,37 @@ namespace Finance_it.API.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Goals");
+                });
+
+            modelBuilder.Entity("Finance_it.API.Data.Entities.MonthlyAggregate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AggregateName")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("AggregateValue")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<string>("Month")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MonthlyAggregates");
                 });
 
             modelBuilder.Entity("Finance_it.API.Data.Entities.Recommendation", b =>
@@ -588,31 +595,6 @@ namespace Finance_it.API.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("Finance_it.API.Data.Entities.ScoreDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Criterion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("CriterionValue")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("FinancialScoreId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FinancialScoreId");
-
-                    b.ToTable("ScoreDetails");
-                });
-
             modelBuilder.Entity("Finance_it.API.Data.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -651,6 +633,63 @@ namespace Finance_it.API.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Finance_it.API.Data.Entities.WeeklyAggregate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AggregateName")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("AggregateValue")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("WeekEndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("WeekStartDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("WeeklyAggregates");
+                });
+
+            modelBuilder.Entity("Finance_it.API.Data.Entities.YearlyAggregate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AggregateName")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("AggregateValue")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("YearlyAggregates");
+                });
+
             modelBuilder.Entity("Finance_it.API.Data.Entities.Category", b =>
                 {
                     b.HasOne("Finance_it.API.Data.Entities.Category", "ParentCategory")
@@ -685,10 +724,10 @@ namespace Finance_it.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Finance_it.API.Data.Entities.FinancialScore", b =>
+            modelBuilder.Entity("Finance_it.API.Data.Entities.Goal", b =>
                 {
                     b.HasOne("Finance_it.API.Data.Entities.User", "User")
-                        .WithMany("FinancialScores")
+                        .WithMany("Goals")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -696,10 +735,10 @@ namespace Finance_it.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Finance_it.API.Data.Entities.Goal", b =>
+            modelBuilder.Entity("Finance_it.API.Data.Entities.MonthlyAggregate", b =>
                 {
                     b.HasOne("Finance_it.API.Data.Entities.User", "User")
-                        .WithMany("Goals")
+                        .WithMany("MonthlyAgregates")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -729,25 +768,31 @@ namespace Finance_it.API.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Finance_it.API.Data.Entities.ScoreDetail", b =>
+            modelBuilder.Entity("Finance_it.API.Data.Entities.WeeklyAggregate", b =>
                 {
-                    b.HasOne("Finance_it.API.Data.Entities.FinancialScore", "FinancialScore")
-                        .WithMany("ScoreDetails")
-                        .HasForeignKey("FinancialScoreId")
+                    b.HasOne("Finance_it.API.Data.Entities.User", "User")
+                        .WithMany("WeeklyAgregates")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("FinancialScore");
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Finance_it.API.Data.Entities.YearlyAggregate", b =>
+                {
+                    b.HasOne("Finance_it.API.Data.Entities.User", "User")
+                        .WithMany("YearlyAgregates")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Finance_it.API.Data.Entities.Category", b =>
                 {
                     b.Navigation("SubCategories");
-                });
-
-            modelBuilder.Entity("Finance_it.API.Data.Entities.FinancialScore", b =>
-                {
-                    b.Navigation("ScoreDetails");
                 });
 
             modelBuilder.Entity("Finance_it.API.Data.Entities.User", b =>
@@ -756,13 +801,17 @@ namespace Finance_it.API.Migrations
 
                     b.Navigation("FinancialEntries");
 
-                    b.Navigation("FinancialScores");
-
                     b.Navigation("Goals");
+
+                    b.Navigation("MonthlyAgregates");
 
                     b.Navigation("Recommendations");
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("WeeklyAgregates");
+
+                    b.Navigation("YearlyAgregates");
                 });
 #pragma warning restore 612, 618
         }

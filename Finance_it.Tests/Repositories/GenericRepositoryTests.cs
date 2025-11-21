@@ -29,19 +29,7 @@ namespace Finance_it.Tests.Repositories
             return context;
         }
 
-        //[Fact]
-        //public async Task GetAllUsers_ReturnsAllUsers()
-        //{
-        //    // Arrange
-        //    var context = GetInMemoryDbContext();
-        //    var repository = new GenericRepository<User>(context);
-
-        //    // Act
-        //    var users = await repository.GetAllByFilterAsync();
-
-        //    // Assert
-        //    Assert.Equal(3, users.Count());
-        }
+       
 
         [Fact]
         public async Task GetUserById_ReturnsCorrectUserOrNull()

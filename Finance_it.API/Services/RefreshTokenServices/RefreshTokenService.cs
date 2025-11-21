@@ -58,7 +58,7 @@ namespace Finance_it.API.Services.RefreshTokenServices
                 Expires = DateTime.UtcNow.AddDays(refreshTokenExpiration),
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Path = "/api/Auth/refresh-token"
+                Path = "/"
             };
             response.Cookies.Append("RefreshToken", refreshToken, refreshTokenCookieOptions);
         }

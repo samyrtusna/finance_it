@@ -14,23 +14,17 @@ export type AuthResponse = {
 };
 
 export type UserState = {
-  name: string | null;
-  role: string | null;
-  accessToken: string | null;
+  name: string;
+  role: string;
+  accessToken: string;
 };
 
 export type AuthInitialState = {
   loading: boolean;
   user: UserState | null;
-  error: string | null;
+  error: string;
 };
 
 export type RefreshTokenResponse = {
-  accessToken: string | null;
-};
-
-export type RefreshTokenInitialState = {
-  loading: boolean;
-  accessToken: string | null;
-  error: string | null;
+  accessToken: string;
 };

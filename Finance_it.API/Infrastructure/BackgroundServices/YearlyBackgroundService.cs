@@ -47,7 +47,7 @@ namespace Finance_it.API.Infrastructure.BackgroundServices
         {
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var agregatesService = scope.ServiceProvider.GetRequiredService<IFinancialAgregatesService>();
+            var agregatesService = scope.ServiceProvider.GetRequiredService<IFinancialAggregatesService>();
 
             var users = await dbContext.Users.ToListAsync(cancellationToken);
             var startDate = new DateTime(DateTime.UtcNow.Year, 1, 1).AddYears(-1);
@@ -65,23 +65,23 @@ namespace Finance_it.API.Infrastructure.BackgroundServices
                     continue;
                 }
 
-                var agregatesList = new List<YearlyAgregate>
+                var agregatesList = new List<YearlyAggregate>
                 {
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.TotalIncome, AgregateValue = agregatesService.TotalIncome(entries)},
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.TotalExpense, AgregateValue = agregatesService.TotalExpense(entries)},
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.NetCashFlow, AgregateValue = agregatesService.NetCashFlow(entries)},
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.NetCashFlowRatio, AgregateValue = agregatesService.NetCashFlowRatio(entries)},
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.TotalSavings, AgregateValue = agregatesService.TotalSavings(entries)},
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.SavingsRate, AgregateValue = agregatesService.SavingsRate(entries)},
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.FixedExpenses, AgregateValue = agregatesService.FixedExpenses(entries)},
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.FixedExpensesRatio, AgregateValue = agregatesService.FixedExpensesRatio(entries)},
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.VariableExpenses, AgregateValue = agregatesService.VariableExpenses(entries)},
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.VariableExpensesRatio, AgregateValue = agregatesService.VariableExpensesRatio(entries)},
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.TotalDebtPayments, AgregateValue = agregatesService.TotalDebtPayments(entries)},
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.DebtToIncomeRatio, AgregateValue = agregatesService.DebtToIncomeRatio(entries)},
-                    new() {UserId = user.Id, Year = startDate.Year, AgregateName = AgregateName.BudgetBalanceScore, AgregateValue = agregatesService.BudgetBalanceScore(entries)}
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.TotalIncome, AggregateValue = agregatesService.TotalIncome(entries)},
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.TotalExpense, AggregateValue = agregatesService.TotalExpense(entries)},
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.NetCashFlow, AggregateValue = agregatesService.NetCashFlow(entries)},
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.NetCashFlowRatio, AggregateValue = agregatesService.NetCashFlowRatio(entries)},
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.TotalSavings, AggregateValue = agregatesService.TotalSavings(entries)},
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.SavingsRate, AggregateValue = agregatesService.SavingsRate(entries)},
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.FixedExpenses, AggregateValue = agregatesService.FixedExpenses(entries)},
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.FixedExpensesRatio, AggregateValue = agregatesService.FixedExpensesRatio(entries)},
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.VariableExpenses, AggregateValue = agregatesService.VariableExpenses(entries)},
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.VariableExpensesRatio, AggregateValue = agregatesService.VariableExpensesRatio(entries)},
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.TotalDebtPayments, AggregateValue = agregatesService.TotalDebtPayments(entries)},
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.DebtToIncomeRatio, AggregateValue = agregatesService.DebtToIncomeRatio(entries)},
+                    new() {UserId = user.Id, Year = startDate.Year, AggregateName = AggregateName.BudgetBalanceScore, AggregateValue = agregatesService.BudgetBalanceScore(entries)}
                 };
-                await dbContext.YearlyAgregates.AddRangeAsync(agregatesList, cancellationToken);
+                await dbContext.YearlyAggregates.AddRangeAsync(agregatesList, cancellationToken);
             }
             await dbContext.SaveChangesAsync(cancellationToken);
         }

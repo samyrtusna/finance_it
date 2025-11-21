@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Finance_it.API.Data.Entities;
+using Finance_it.API.Models.Dtos.CategoryDtos;
 using Finance_it.API.Models.Dtos.FinancialEntryDtos;
 using Finance_it.API.Models.Dtos.MonthlyAgregateDtos;
 using Finance_it.API.Models.Dtos.RefreshTokenDtos;
@@ -44,23 +45,23 @@ namespace Finance_it.API.Models.Automapper
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.TransactionDate, opt => opt.Ignore());
 
-            CreateMap<WeeklyAgregate, WeeklyAgregateResponseDto>()
+            CreateMap<WeeklyAggregate, WeeklyAggregateResponseDto>()
                 .ForMember(dest => dest.UsertId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.WeekStartDate, opt => opt.MapFrom(src => src.WeekStartDate))
                 .ForMember(dest => dest.WeekEndDate, opt => opt.MapFrom(src => src.WeekEndDate))
-                .ForMember(dest => dest.AgregateName, opt => opt.MapFrom(src => src.AgregateName))
-                .ForMember(dest => dest.AgregateValue, opt => opt.MapFrom(src => src.AgregateValue));
+                .ForMember(dest => dest.AggregateName, opt => opt.MapFrom(src => src.AggregateName))
+                .ForMember(dest => dest.AggregateValue, opt => opt.MapFrom(src => src.AggregateValue));
 
-            CreateMap<MonthlyAgregate, MonthlyAgregateResponseDto>()
+            CreateMap<MonthlyAggregate, MonthlyAggregateResponseDto>()
                 .ForMember(Dest => Dest.Year, opt => opt.MapFrom(src => src.Year))
                 .ForMember(Dest => Dest.Month, opt => opt.MapFrom(src => src.Month))
-                .ForMember(Dest => Dest.AgregateName, opt => opt.MapFrom(src => src.AgregateName))
-                .ForMember(Dest => Dest.AgregateValue, opt => opt.MapFrom(src => src.AgregateValue));
+                .ForMember(Dest => Dest.AggregateName, opt => opt.MapFrom(src => src.AggregateName))
+                .ForMember(Dest => Dest.AggregateValue, opt => opt.MapFrom(src => src.AggregateValue));
 
-            CreateMap<YearlyAgregate, YearlyAgregateResponseDto>()
+            CreateMap<YearlyAggregate, YearlyAggregateResponseDto>()
                 .ForMember(Dest => Dest.Year, opt => opt.MapFrom(src => src.Year))
-                .ForMember(Dest => Dest.AgregateName, opt => opt.MapFrom(src => src.AgregateName))
-                .ForMember(Dest => Dest.AgregateValue, opt => opt.MapFrom(src => src.AgregateValue));
+                .ForMember(Dest => Dest.AggregateName, opt => opt.MapFrom(src => src.AggregateName))
+                .ForMember(Dest => Dest.AggregateValue, opt => opt.MapFrom(src => src.AggregateValue));
 
             CreateMap<FinancialEntry, GetFinancialEntryResponseDto>()
                 .ForMember(Dest => Dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -78,6 +79,13 @@ namespace Finance_it.API.Models.Automapper
                 .ForMember(Dest => Dest.Category, opt => opt.MapFrom(src => src.Category))
                 .ForMember(Dest => Dest.Amount, opt => opt.MapFrom(src => src.Amount))
                 .ForMember(Dest => Dest.Description, opt => opt.MapFrom(src => src.Description));
+
+            CreateMap<Category, CategoryResponseDto>()
+                .ForMember(Dest => Dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(Dest => Dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(Dest => Dest.Type, opt => opt.MapFrom(src => src.Type))
+                .ForMember(Dest => Dest.ParentCategoryId, opt => opt.MapFrom(src => src.ParentCategoryId))
+                .ForMember(Dest => Dest.SubCategories, opt => opt.MapFrom(src => src.SubCategories));
         }
     }
 }

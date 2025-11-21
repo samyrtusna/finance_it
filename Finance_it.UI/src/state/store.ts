@@ -1,13 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
-import registerUserReducer from "./slices/authSlices/registerUserSlice";
-import loginUserReducer from "./slices/authSlices/loginUserSlice";
-import refreshTokenReducer from "./slices/authSlices/refreshTokenSlice";
+import authUserReducer from "./slices/authSlice";
+import categoryReducer from "./slices/categorySlice";
+import financialEntryReducer from "./slices/financialEntrySlice";
+import latestAggregatesReducer from "./slices/latestAggregatesSlice";
 
 const store = configureStore({
   reducer: {
-    registerUser: registerUserReducer,
-    loginUser: loginUserReducer,
-    refreshToken: refreshTokenReducer,
+    authUser: authUserReducer,
+    categories: categoryReducer,
+    financialEntries: financialEntryReducer,
+    latestAggregates: latestAggregatesReducer,
   },
   devTools: import.meta.env.MODE !== "production",
 });

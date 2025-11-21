@@ -1,26 +1,25 @@
 import AxiosService from "./axiosInstance";
-import type { AxiosResponse } from "axios";
 
 type MethodType = "get" | "post" | "put" | "delete";
 
 const request = async <
   TResponse,
-  TBody extends Record<string, unknown> | undefined = undefined,
-  TParams extends Record<string, unknown> = Record<string, unknown>
+  TBody = Record<string, unknown> | undefined,
+  TParams = Record<string, unknown>
 >(
   method: MethodType,
   route: string,
   body?: TBody,
   params?: TParams
-): Promise<AxiosResponse<TResponse>> => {
-  return AxiosService.request<TResponse>({
+): Promise<TResponse> => {
+  const response = await AxiosService.request<TResponse>({
     method,
     url: route,
     data: body,
     params,
   });
+  return response.data;
 };
-
 const Get = <
   TResponse,
   TParams extends Record<string, unknown> = Record<string, unknown>

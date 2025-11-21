@@ -15,43 +15,44 @@ namespace Finance_it.API.Services.FinancialEntryServices
     public class FinancialEntryService : IFinancialEntryService
     {
         private readonly IGenericRepository<FinancialEntry> _financialEntryRepository;
-        private readonly IWeeklyAgregatesService _weeklyAgregateService;
-        private readonly IMonthlyAgregatesService _monthlyAgregateService;
-        private readonly IYearlyAgregatesService _yearlyAgregatesService;
+        private readonly IWeeklyAggregatesService _weeklyAggregateService;
+        private readonly IMonthlyAggregatesService _monthlyAggregateService;
+        private readonly IYearlyAggregatesService _yearlyAggregatesService;
         private readonly IMapper _mapper;
-        private readonly IFinancialAgregatesService _financialAgregatesService;
+        private readonly IFinancialAggregatesService _financialAgregatesService;
 
         public FinancialEntryService(IGenericRepository<FinancialEntry> financialEntryRepository,  
             IMapper mapper, 
-            IWeeklyAgregatesService weeklyAgregateService, 
-            IMonthlyAgregatesService monthlyAgregateService, 
-            IYearlyAgregatesService yearlyAgregatesService,
-            IFinancialAgregatesService financialAgregatesService)
+            IWeeklyAggregatesService weeklyAggregateService, 
+            IMonthlyAggregatesService monthlyAggregateService, 
+            IYearlyAggregatesService yearlyAggregatesService,
+            IFinancialAggregatesService financialAgregatesService)
         {
             _financialEntryRepository = financialEntryRepository;
             _mapper = mapper;
-            _weeklyAgregateService = weeklyAgregateService;
-            _monthlyAgregateService = monthlyAgregateService;
-            _yearlyAgregatesService = yearlyAgregatesService;
+            _weeklyAggregateService = weeklyAggregateService;
+            _monthlyAggregateService = monthlyAggregateService;
+            _yearlyAggregatesService = yearlyAggregatesService;
             _financialAgregatesService = financialAgregatesService;
         }
 
-        public async Task<CreateFinancialEntryResponseDto> AddFinancialEntryAsync(CreateFinancialEntryRequestDto entry)
+        public async Task<CreateFinancialEntryResponseDto> AddFinancialEntryAsync(CreateFinancialEntryRequestDto entry, int userId)
         {
             ArgumentNullException.ThrowIfNull(entry, $"The argument {nameof(entry)} is null");
 
+            entry.UserId = userId;
             var newEntry = _mapper.Map<FinancialEntry>(entry);
 
             await _financialEntryRepository.AddAsync(newEntry);
             await _financialEntryRepository.SaveAsync();
 
-            int userId = newEntry.UserId;
+            
 
-            var currentWeekAgregates = await _weeklyAgregateService.GetCurrentWeekAgregatesAsync(userId);
-            var currentMonthAgregates = await _monthlyAgregateService.GetCurrentMonthAgregatesAsync(userId);
-            var currentYearAgregates = await _yearlyAgregatesService.GetCurrentYearAgregatesAsync(userId);
+            var currentWeekAggregates = await _weeklyAggregateService.GetCurrentWeekAggregatesAsync(userId);
+            var currentMonthAggregates = await _monthlyAggregateService.GetCurrentMonthAggregatesAsync(userId);
+            var currentYearAggregates = await _yearlyAggregatesService.GetCurrentYearAggregatesAsync(userId);
 
-            var allEntries = await _financialEntryRepository.GetAllByFilterAsync( e => e.UserId == userId, useNoTracking: true);
+            var allEntries = await _financialEntryRepository.GetAllByFilterAsync( e => e.UserId == userId, include: q => q.Include(e => e.Category), useNoTracking: true);
 
             decimal totalIncome = _financialAgregatesService.TotalIncome(allEntries);
             decimal totalExpense = _financialAgregatesService.TotalExpense(allEntries);
@@ -59,9 +60,9 @@ namespace Finance_it.API.Services.FinancialEntryServices
 
             return new CreateFinancialEntryResponseDto
             {
-                CurrentWeekAgregatesDto = currentWeekAgregates,
-                CurrentMonthAgregatesDto = currentMonthAgregates,
-                CurrentYearAgregatesDto = currentYearAgregates,
+                CurrentWeekAggregates = currentWeekAggregates,
+                CurrentMonthAggregates = currentMonthAggregates,
+                CurrentYearAggregates = currentYearAggregates,
                 TotalNetCashFlow = totalNetCashFlow,
             };                                                     
         }

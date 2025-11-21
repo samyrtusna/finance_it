@@ -2,16 +2,17 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import type { FormikHelpers } from "formik";
 import { LoginSchema } from "../formik/loginSchema";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.png";
 import { MdLockOutline, MdOutlineEmail } from "react-icons/md";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
-import { loginUser } from "../state/slices/authSlices/loginUserSlice";
+import { loginUser } from "../state/slices/authSlice";
 import type { LoginRequest } from "../types/authTypes";
+import Spinner from "../components/Spinner";
+import { toast } from "sonner";
 
 function Login() {
   const initialValues: LoginRequest = { email: "", password: "" };
 
-  const loginState = useAppSelector((state) => state.loginUser);
+  const authUserState = useAppSelector((state) => state.authUser);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -21,29 +22,25 @@ function Login() {
     props: FormikHelpers<LoginRequest>
   ) => {
     const { email, password } = values;
-
-    try {
+    if (authUserState.user) {
+      toast.info(`User ${authUserState.user.name} is already logged in`);
+      navigate("/");
+    } else {
       const response = await dispatch(loginUser({ email, password }));
       if (response.meta.requestStatus == "fulfilled") {
         props.setSubmitting(false);
         props.resetForm();
         navigate("/");
       }
-    } catch (error) {
-      console.error("signup error", error);
     }
   };
 
-  if (loginState.loading) {
-    return <h2 className="text-2xl font-bold text-blue-700">Loading...</h2>;
+  if (authUserState.loading) {
+    return <Spinner />;
   }
 
-  if (loginState.error) {
-    return (
-      <div>
-        <p className="text-red-500">Error : {loginState.error} </p>
-      </div>
-    );
+  if (authUserState.error) {
+    toast.error(authUserState.error);
   }
 
   return (
@@ -51,7 +48,7 @@ function Login() {
       <div className="w-full max-w-lg h-full max-h-dvh bg-blue-700 rounded-lg shadow-lg">
         <div className="flex h-1/3 justify-center items-center  ">
           <img
-            src={logo}
+            src="/logo.png"
             alt="App Logo"
             className="w-40 h-40 filter invert brightness-0"
           />

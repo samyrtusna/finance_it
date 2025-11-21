@@ -32,7 +32,7 @@ namespace Finance_it.API.Data.AppDbContext
                 new Category { Id = 11, Name = "Internet&Telephone", Type = FinancialType.Expense, ParentCategoryId = 7, ExpenseType = ExpenseType.Variable},
                 new Category { Id = 12, Name = "Home Insurance", Type = FinancialType.Expense, ParentCategoryId = 7, ExpenseType = ExpenseType.Variable },
                 new Category { Id = 13, Name = "Home Maintenance", Type = FinancialType.Expense, ParentCategoryId = 7, ExpenseType = ExpenseType.Variable },
-
+               
                 new Category { Id = 14, Name = "Transport", Type = FinancialType.Expense, ParentCategoryId = 2, ExpenseType = ExpenseType.Mixed },
                 new Category { Id = 15, Name = "Car Loan", Type = FinancialType.Expense, ParentCategoryId = 14, ExpenseType = ExpenseType.Fixed },
                 new Category { Id = 16, Name = "Fuel", Type = FinancialType.Expense, ParentCategoryId = 14, ExpenseType = ExpenseType.Variable },
@@ -66,7 +66,7 @@ namespace Finance_it.API.Data.AppDbContext
                 new Category { Id = 44, Name = "Clothes", Type = FinancialType.Expense, ParentCategoryId = 37, ExpenseType = ExpenseType.Variable },
                 new Category { Id = 45, Name = "Other/Miscellaneous", Type = FinancialType.Expense, ParentCategoryId = 2, ExpenseType = ExpenseType.Mixed },
                 new Category { Id = 46, Name = "Taxes&Fees", Type = FinancialType.Expense, ParentCategoryId = 42, ExpenseType = ExpenseType.Fixed },
-                new Category { Id = 47, Name = "Unexpected Expenses", Type = FinancialType.Expense, ParentCategoryId = 42, ExpenseType = ExpenseType.Variable }
+                new Category { Id = 47, Name = "Unexpected Expenses", Type = FinancialType.Expense, ParentCategoryId = 42, ExpenseType = ExpenseType.Variable }               
                 );
         }
 
@@ -77,8 +77,8 @@ namespace Finance_it.API.Data.AppDbContext
         public DbSet<Goal> Goals { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<WeeklyAgregate> WeeklyAgregates { get; set; }
-        public DbSet<MonthlyAgregate> MonthlyAgregates { get; set; }
-        public DbSet<YearlyAgregate> YearlyAgregates { get; set; }
+        public DbSet<WeeklyAggregate> WeeklyAggregates { get; set; }
+        public DbSet<MonthlyAggregate> MonthlyAggregates { get; set; }
+        public DbSet<YearlyAggregate> YearlyAggregates { get; set; }
         }
 }

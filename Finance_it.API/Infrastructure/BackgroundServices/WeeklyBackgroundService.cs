@@ -8,7 +8,9 @@ namespace Finance_it.API.Infrastructure.BackgroundServices
 {
     public class WeeklyBackgroundService : BackgroundService
     {
-        private IServiceProvider _serviceProvider;
+        private readonly
+            
+            IServiceProvider _serviceProvider;
         private bool _hasRunThisWeek = false;
 
         public WeeklyBackgroundService(IServiceProvider serviceProvider)
@@ -25,14 +27,14 @@ namespace Finance_it.API.Infrastructure.BackgroundServices
                     var now = DateTime.UtcNow;
                     var nextMidnight = now.Date.AddDays(1);
                     var delay = nextMidnight - now;
-                    var currentWeekStart = WeekAgregateUtils.GetWeekStartAndEnd(now).weekStart;
+                    var currentWeekStart = WeekAggregateUtils.GetWeekStartAndEnd(now).weekStart;
 
                     if (now.Day == currentWeekStart.Day && !_hasRunThisWeek)
                     {
                         await CalculateWeeklyAgregates(stoppingToken);
                         _hasRunThisWeek = true;
                     }
-                    if(now.Day != currentWeekStart.Day)
+                    if(now.Day != currentWeekStart.Day && _hasRunThisWeek)
                     {
                         _hasRunThisWeek = false ;
                     }
@@ -50,12 +52,12 @@ namespace Finance_it.API.Infrastructure.BackgroundServices
         {
             using var scope = _serviceProvider.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var agregatesService = scope.ServiceProvider.GetRequiredService<IFinancialAgregatesService>();
+            var agregatesService = scope.ServiceProvider.GetRequiredService<IFinancialAggregatesService>();
 
             var users = await dbContext.Users.ToListAsync(cancellationToken);
 
             var yesterday = DateTime.UtcNow.AddDays(-1);
-            var (weekStart, weekEnd) = WeekAgregateUtils.GetWeekStartAndEnd(yesterday);
+            var (weekStart, weekEnd) = WeekAggregateUtils.GetWeekStartAndEnd(yesterday);
 
             foreach ( var user in users )
             {
@@ -64,30 +66,30 @@ namespace Finance_it.API.Infrastructure.BackgroundServices
                     .Where(e => e.UserId == user.Id && e.TransactionDate >= weekStart && e.TransactionDate < weekEnd)
                     .ToListAsync(cancellationToken);
 
-                if (!entries.Any())
+                if (entries.Count == 0)
                 {
                     continue;
                 }
 
-                var agregatesList = new List<WeeklyAgregate>
+                var agregatesList = new List<WeeklyAggregate>
                 {
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.TotalIncome, AgregateValue = agregatesService.TotalIncome(entries)},
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.TotalExpense, AgregateValue = agregatesService.TotalExpense(entries)},
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.NetCashFlow, AgregateValue = agregatesService.NetCashFlow(entries)},
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.NetCashFlowRatio, AgregateValue = agregatesService.NetCashFlowRatio(entries)},
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.TotalSavings, AgregateValue = agregatesService.TotalSavings(entries)},
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.SavingsRate, AgregateValue = agregatesService.SavingsRate(entries)},
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.FixedExpenses, AgregateValue = agregatesService.FixedExpenses(entries)},
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.FixedExpensesRatio, AgregateValue = agregatesService.FixedExpensesRatio(entries)},
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.VariableExpenses, AgregateValue = agregatesService.VariableExpenses(entries)},
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.VariableExpensesRatio, AgregateValue = agregatesService.VariableExpensesRatio(entries)},
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.TotalDebtPayments, AgregateValue = agregatesService.TotalDebtPayments(entries)},
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.DebtToIncomeRatio, AgregateValue = agregatesService.DebtToIncomeRatio(entries)},
-                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AgregateName = AgregateName.BudgetBalanceScore, AgregateValue = agregatesService.BudgetBalanceScore(entries)}
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.TotalIncome, AggregateValue = agregatesService.TotalIncome(entries)},
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.TotalExpense, AggregateValue = agregatesService.TotalExpense(entries)},
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.NetCashFlow, AggregateValue = agregatesService.NetCashFlow(entries)},
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.NetCashFlowRatio, AggregateValue = agregatesService.NetCashFlowRatio(entries)},
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.TotalSavings, AggregateValue = agregatesService.TotalSavings(entries)},
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.SavingsRate, AggregateValue = agregatesService.SavingsRate(entries)},
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.FixedExpenses, AggregateValue = agregatesService.FixedExpenses(entries)},
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.FixedExpensesRatio, AggregateValue = agregatesService.FixedExpensesRatio(entries)},
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.VariableExpenses, AggregateValue = agregatesService.VariableExpenses(entries)},
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.VariableExpensesRatio, AggregateValue = agregatesService.VariableExpensesRatio(entries)},
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.TotalDebtPayments, AggregateValue = agregatesService.TotalDebtPayments(entries)},
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.DebtToIncomeRatio, AggregateValue = agregatesService.DebtToIncomeRatio(entries)},
+                    new() {UserId = user.Id, WeekStartDate = weekStart, WeekEndDate = weekEnd.AddDays(-1), AggregateName = AggregateName.BudgetBalanceScore, AggregateValue = agregatesService.BudgetBalanceScore(entries)}
                 };
-                await dbContext.WeeklyAgregates.AddRangeAsync(agregatesList, cancellationToken);
+                await dbContext.WeeklyAggregates.AddRangeAsync(agregatesList, cancellationToken);
             }
-            await dbContext.AddRangeAsync(cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

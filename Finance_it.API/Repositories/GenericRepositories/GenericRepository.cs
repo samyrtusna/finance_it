@@ -16,7 +16,7 @@ namespace Finance_it.API.Repositories.GenericRepositories
             _dbSet = _context.Set<T>();
         }
 
-        public async Task<IEnumerable<T>> GetAllByFilterAsync(Expression<Func<T, bool>>? filter, bool useNoTracking = false, Func<IQueryable<T>, IQueryable<T>>? include = null)
+        public async Task<IEnumerable<T>> GetAllByFilterAsync(Expression<Func<T, bool>>? filter = null, bool useNoTracking = false, Func<IQueryable<T>, IQueryable<T>>? include = null)
         {
             IQueryable<T> query = _dbSet;
 

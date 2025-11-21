@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿
+using System.Security.Claims;
 using Finance_it.API.Infrastructure.Exceptions;
 using Finance_it.API.Models.Dtos.ApiResponsesDtos;
 using Finance_it.API.Models.Dtos.FinancialEntryDtos;
@@ -24,7 +25,7 @@ namespace Finance_it.API.Controllers
         [HttpPost("new")]
         public async Task<ActionResult<ApiResponseDto<CreateFinancialEntryResponseDto>>> AddNewFinancialEntry(CreateFinancialEntryRequestDto entry)
         {
-            var response = await _service.AddFinancialEntryAsync(entry);
+            var response = await _service.AddFinancialEntryAsync(entry, UserId);
 
             return Ok(response);
         }

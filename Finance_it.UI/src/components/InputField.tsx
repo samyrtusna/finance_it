@@ -2,7 +2,7 @@ import React from "react";
 
 type InputFieldProps = {
   labelName: string;
-  icon: React.ElementType;
+  icon: unknown;
   id: string;
   name: string;
   type: string;
@@ -29,7 +29,7 @@ function InputField({
         {labelName}
       </label>
       <div className="flex items-center w-full rounded-md shadow-lg p-2">
-        <Icon className="size-6 text-gray-400" />
+        {Icon ? <Icon className="size-6 text-gray-400" /> : null}
 
         <input
           id={id}

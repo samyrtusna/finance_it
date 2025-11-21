@@ -6,9 +6,9 @@ namespace Finance_it.API.Models.Dtos.FinancialEntryDtos
 {
     public class CreateFinancialEntryResponseDto
     {
-        public CurrentWeekAgregateResponseDto CurrentWeekAgregatesDto { get; set; }
-        public CurrentMonthAgregatesDto CurrentMonthAgregatesDto { get; set; }
-        public CurrentYearAgregatesDto CurrentYearAgregatesDto { get; set; } 
-        public decimal TotalNetCashFlow { get; set; }  
+        public CurrentWeekAggregateResponseDto CurrentWeekAggregates { get; set; }
+        public CurrentMonthAggregatesDto CurrentMonthAggregates { get; set; }
+        public CurrentYearAggregatesDto CurrentYearAggregates { get; set; } 
+        public decimal TotalNetCashFlow { get; set; }   
     }  
 }
